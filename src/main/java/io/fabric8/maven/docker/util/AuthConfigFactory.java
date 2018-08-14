@@ -308,12 +308,20 @@ public class AuthConfigFactory {
 
     private AuthConfig getAuthConfigFromDockerConfig(String registry) throws MojoExecutionException {
         JSONObject dockerConfig = readDockerConfig();
+        log.debug("1" + dockerConfig);
         if (dockerConfig == null || !dockerConfig.has("auths")) {
             return null;
         }
         JSONObject auths = dockerConfig.getJSONObject("auths");
+
+        log.debug("2" + auths);
+
         String registryToLookup = registry != null ? registry : DOCKER_LOGIN_DEFAULT_REGISTRY;
+
+        log.debug("3" + registryToLookup);
+
         JSONObject credentials = getCredentialsNode(auths, registryToLookup);
+        log.debug("4" + credentials);
         if (credentials == null || !credentials.has("auth")) {
             return null;
         }
@@ -401,6 +409,8 @@ public class AuthConfigFactory {
 
     private Reader getFileReaderFromHomeDir(String path) {
         File file = new File(getHomeDir(),path);
+        log.debug(file.getAbsolutePath());
+
         if (file.exists() && file.length() != 0) {
             try {
                 return new FileReader(file);
@@ -415,8 +425,11 @@ public class AuthConfigFactory {
 
     private File getHomeDir() {
         String homeDir = System.getProperty("user.home");
+        log.debug("homeDir1 " + homeDir);
+
         if (homeDir == null) {
             homeDir = System.getenv("HOME");
+            log.debug("homeDir2 " + homeDir);
         }
         return new File(homeDir);
     }
